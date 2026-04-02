@@ -7,6 +7,28 @@ public class Threat {
     int energy;
     int maxEnergy;
     int level;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSkill(int skill) {
+        this.skill = skill;
+    }
+    public void setResillience(int resillience) {
+        this.resillience = resillience;
+    }
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+    public void setMaxEnergy(int maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+
+
 
     public int attack(CrewMember target){
         int damage = skill - target.resillience;
