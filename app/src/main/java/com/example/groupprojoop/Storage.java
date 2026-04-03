@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Storage {
 
-    private HashMap<Integer, CrewMember> crewMap = new HashMap<>();
+    protected HashMap<Integer, CrewMember> crewMap = new HashMap<>();
 
     public void addCrewMember(CrewMember crewMember){
 
