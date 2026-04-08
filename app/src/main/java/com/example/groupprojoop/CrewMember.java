@@ -14,6 +14,7 @@ public class CrewMember {
     protected int missionsCompleted;
     protected int victories;
     protected int trainingSessions;
+    protected String type; // For polymorphic serialization
 
     public CrewMember(String name, int skill, int resillience, int energy) {
         this.name = name;
@@ -23,6 +24,7 @@ public class CrewMember {
         this.maxEnergy = energy;
         this.exp = 0;
         this.isDefeated = false;
+        this.type = this.getClass().getSimpleName();
     }
 
     public int attack(Threat target){

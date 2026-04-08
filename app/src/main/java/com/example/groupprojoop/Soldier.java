@@ -16,7 +16,7 @@ public class Soldier extends CrewMember {
 
     @Override
     public void takeDamage(int damage){
-        this.energy -= Math.max(0, damage - (this.resillience+this.armorRating);
+        this.energy -= Math.max(0, damage - (this.resillience + this.armorRating));
         if (this.energy <= 0) {
             this.energy = 0;
             this.isDefeated = true;

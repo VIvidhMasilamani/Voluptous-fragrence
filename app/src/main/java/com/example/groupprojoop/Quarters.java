@@ -1,5 +1,8 @@
 package com.example.groupprojoop;
 
+import android.content.Context;
+import android.content.Intent;
+
 public class Quarters {
     protected static Storage storage;
 
@@ -30,7 +33,6 @@ public class Quarters {
                 break;
         }
 
-
         int potentialId = 1;
         if (storage != null) {
             while (storage.getCrewMember(potentialId) != null) {
@@ -49,11 +51,11 @@ public class Quarters {
         crewMember.restoreEnergy();
     }
 
-    public void moveTosimulation(CrewMember crewMember, Simulator simulator) {
-        simulator.train(crewMember);
-        if (storage != null) {
-            storage.removeCrewMember(crewMember.id);
-        }
+    public void moveTosimulation(CrewMember crewMember, Simulator simulator, Context context) {
+        // Instead of deleting him, we open the Simulator Screen
+        Intent intent = new Intent(context, SimulatorActivity.class);
+        intent.putExtra("crew_id", crewMember.id);
+        context.startActivity(intent);
     }
 
     public void returnToQuarters(CrewMember crewMember) {

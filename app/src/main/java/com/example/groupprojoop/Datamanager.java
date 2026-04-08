@@ -8,16 +8,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Datamanager {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "game_save.json";
 
-
     public static void saveFullGame(Context context, Quarters quarters, Missioncontrol missionControl, Medbay medbay) {
         GameState state = new GameState();
         
-        // 1. Save Crew Lists from all locations
         if (Quarters.storage != null) {
             state.quartersCrew = Quarters.storage.listCrewMembers();
         } else {
@@ -36,11 +35,9 @@ public class Datamanager {
             state.defeatedUnits = new ArrayList<>();
         }
 
-        // 2. Save Global Statistics
         state.globalMissionsPlayed = StatisticsManager.globalMissionsPlayed;
         state.globalVictories = StatisticsManager.globalVictories;
 
-        // 3. Save Mission Progress
         if (missionControl != null) {
             state.missionCounter = missionControl.missionCounter;
             state.successfulMissions = missionControl.successfulmissions;
@@ -55,43 +52,36 @@ public class Datamanager {
         }
     }
 
-
     public static void loadFullGame(Context context, Quarters quarters, Missioncontrol missionControl, Medbay medbay) {
         File file = new File(context.getFilesDir(), FILE_NAME);
         if (!file.exists()) return;
 
         try (FileReader reader = new FileReader(file)) {
-            GameState state;
-            state = gson.fromJson(reader, GameState.class);
+            GameState state = gson.fromJson(reader, GameState.class);
             if (state == null) return;
 
-            // 1. Restore Quarters Storage
             if (Quarters.storage != null && state.quartersCrew != null) {
                 Quarters.storage.crewMap.clear();
-                for (CrewMember member : state.quartersCrew) {
+                for (CrewMember member : restoreTypes(state.quartersCrew)) {
                     Quarters.storage.addCrewMember(member);
                 }
             }
 
-            // 2. Restore Mission Control Storage
             if (missionControl != null && missionControl.missioncontrolStorage != null && state.missionCrew != null) {
                 missionControl.missioncontrolStorage.crewMap.clear();
-                for (CrewMember member : state.missionCrew) {
+                for (CrewMember member : restoreTypes(state.missionCrew)) {
                     missionControl.missioncontrolStorage.addCrewMember(member);
                 }
             }
 
-            // 3. Restore Medbay Defeated Units
             if (medbay != null && state.defeatedUnits != null) {
                 medbay.Defeatedunits.clear();
-                medbay.Defeatedunits.addAll(state.defeatedUnits);
+                medbay.Defeatedunits.addAll(restoreTypes(state.defeatedUnits));
             }
 
-            // 4. Restore Global Statistics
             StatisticsManager.globalMissionsPlayed = state.globalMissionsPlayed;
             StatisticsManager.globalVictories = state.globalVictories;
 
-            // 5. Restore Mission Progress
             if (missionControl != null) {
                 missionControl.missionCounter = state.missionCounter;
                 missionControl.successfulmissions = state.successfulMissions;
@@ -101,5 +91,26 @@ public class Datamanager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static List<CrewMember> restoreTypes(List<CrewMember> list) {
+        List<CrewMember> restored = new ArrayList<>();
+        for (CrewMember cm : list) {
+            CrewMember exact;
+            if ("Soldier".equals(cm.type)) exact = new Soldier(cm.name, cm.skill, cm.resillience, cm.maxEnergy);
+            else if ("Pilot".equals(cm.type)) exact = new Pilot(cm.name, cm.skill, cm.resillience, cm.maxEnergy);
+            else if ("Engineer".equals(cm.type)) exact = new Engineer(cm.name, cm.skill, cm.resillience, cm.maxEnergy);
+            else if ("Medic".equals(cm.type)) exact = new Medic(cm.name, cm.skill, cm.resillience, cm.maxEnergy);
+            else if ("Scientist".equals(cm.type)) exact = new Scientist(cm.name, cm.skill, cm.resillience, cm.maxEnergy);
+            else exact = new CrewMember(cm.name, cm.skill, cm.resillience, cm.maxEnergy);
+            
+            exact.id = cm.id;
+            exact.energy = cm.energy;
+            exact.exp = cm.exp;
+            exact.victories = cm.victories;
+            exact.trainingSessions = cm.trainingSessions;
+            restored.add(exact);
+        }
+        return restored;
     }
 }
