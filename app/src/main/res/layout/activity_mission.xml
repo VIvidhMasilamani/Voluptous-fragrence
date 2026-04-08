@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/text_threat_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Threat: Boss"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <ProgressBar
+        android:id="@+id/progress_threat_energy"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:progress="100" />
+
+    <TextView
+        android:id="@+id/text_threat_stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="HP: 100/100"
+        android:textAlignment="center" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginVertical="16dp"
+        android:background="@android:color/darker_gray" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_mission_crew"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btn_retreat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Retreat" />
+
+</LinearLayout>

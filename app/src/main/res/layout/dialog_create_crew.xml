@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Crew Member Name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_crew_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Select Speciality"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_speciality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radio_soldier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Soldier"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/radio_pilot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pilot" />
+
+        <RadioButton
+            android:id="@+id/radio_engineer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Engineer" />
+
+        <RadioButton
+            android:id="@+id/radio_medic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medic" />
+
+        <RadioButton
+            android:id="@+id/radio_scientist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scientist" />
+    </RadioGroup>
+
+</LinearLayout>
