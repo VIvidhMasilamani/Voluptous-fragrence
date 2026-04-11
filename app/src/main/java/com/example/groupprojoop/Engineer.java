@@ -10,11 +10,15 @@ public class Engineer extends CrewMember {
 
     @Override
     public String getPassiveDescription() {
-        return "for every fallen crewmember the engineer will increase the Engineering skill which is a transferrable skill point to another crewmember";
+        return "Special attack deals 1.3x damage and consumes less energy.";
     }
 
     @Override
     public <T> void signature(T target) {
-        // Implementation for Engineer's signature move
+        if (target instanceof Threat) {
+            Threat threat = (Threat) target;
+            int damage = (int) (attack(threat) * 1.3);
+            threat.takeDamage(damage);
+        }
     }
 }

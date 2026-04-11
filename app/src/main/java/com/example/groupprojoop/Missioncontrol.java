@@ -1,5 +1,6 @@
 package com.example.groupprojoop;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Missioncontrol {
@@ -19,9 +20,10 @@ public class Missioncontrol {
         this.missionCounter = missionCounter;
     }
 
-    public void launchMission(CrewMember crewMember, CrewMember crewMember2) {
-        missioncontrolStorage.addCrewMember(crewMember);
-        missioncontrolStorage.addCrewMember(crewMember2);
+    public void launchMission(List<CrewMember> selectedCrew) {
+        for (CrewMember c : selectedCrew) {
+            missioncontrolStorage.addCrewMember(c);
+        }
         StatisticsManager.setGlobalMissionsPlayed(1);
     }
 
@@ -37,31 +39,36 @@ public class Missioncontrol {
         return threat;
     }
 
-    /**
-     * Executes a turn-based combat round.
-     * 1. Crew Member attacks Threat.
-     * 2. If Threat is not defeated, Threat attacks a random Crew Member.
-     */
-    public String executeCombatTurn(CrewMember attacker) {
+    public String executeCombatTurn(CrewMember attacker, boolean isSpecial) {
         if (threat == null || threat.isDefeated()) return "No threat to attack!";
 
         StringBuilder result = new StringBuilder();
 
         // Crew Member Turn
-        int crewDamage = attacker.attack(threat);
-        threat.takeDamage(crewDamage);
-        result.append(attacker.name).append(" attacked ").append(threat.name)
-                .append(" for ").append(crewDamage).append(" damage.\n");
+        if (isSpecial) {
+            attacker.signature(threat);
+            result.append(attacker.name).append(" used SPECIAL ATTACK on ").append(threat.name).append("!\n");
+        } else {
+            int crewDamage = attacker.attack(threat);
+            threat.takeDamage(crewDamage);
+            result.append(attacker.name).append(" attacked ").append(threat.name)
+                    .append(" for ").append(crewDamage).append(" damage.\n");
+        }
 
         if (threat.isDefeated()) {
             result.append(threat.name).append(" has been defeated!");
             return result.toString();
         }
 
-        // Threat Turn
+        // Threat Turn: Response attack
         List<CrewMember> targets = missioncontrolStorage.listCrewMembers();
-        if (!targets.isEmpty()) {
-            CrewMember target = targets.get((int) (Math.random() * targets.size()));
+        List<CrewMember> aliveTargets = new ArrayList<>();
+        for (CrewMember c : targets) {
+            if (c.energy > 0) aliveTargets.add(c);
+        }
+
+        if (!aliveTargets.isEmpty()) {
+            CrewMember target = aliveTargets.get((int) (Math.random() * aliveTargets.size()));
             int threatDamage = threat.attack(target);
             target.takeDamage(threatDamage);
             result.append(threat.name).append(" counter-attacked ").append(target.name)
@@ -71,13 +78,17 @@ public class Missioncontrol {
         return result.toString();
     }
 
-    public boolean endMission() {
+    public List<String> endMission() {
         boolean win = threat != null && threat.isDefeated();
+        List<String> notifications = new ArrayList<>();
 
         for (CrewMember crewMember : missioncontrolStorage.listCrewMembers()) {
             if (win) {
                 crewMember.victories++;
-                crewMember.gainExperience(10 * threat.level);
+                boolean leveledUp = crewMember.gainExperience(30 * threat.level);
+                if (leveledUp) {
+                    notifications.add(crewMember.name + " LEVELED UP to Level " + crewMember.level + "!");
+                }
             }
         }
 
@@ -85,11 +96,10 @@ public class Missioncontrol {
             successfulmissions++;
             StatisticsManager.recordMissionResult(true);
             missionCounter++;
-            return true;
         } else {
             failedmissions++;
             StatisticsManager.recordMissionResult(false);
-            return false;
         }
+        return notifications;
     }
 }

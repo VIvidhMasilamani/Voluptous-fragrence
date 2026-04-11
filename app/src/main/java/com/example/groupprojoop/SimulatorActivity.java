@@ -59,7 +59,8 @@ public class SimulatorActivity extends AppCompatActivity {
         updateHologramUI();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CrewAdapter(trainingCrew, null, null, simControl, CrewAdapter.Context.SIMULATOR, this::updateSimState);
+        // Fixed: Removed the extra null argument to match CrewAdapter constructor
+        adapter = new CrewAdapter(trainingCrew, null, simControl, CrewAdapter.Context.SIMULATOR, this::updateSimState);
         recyclerView.setAdapter(adapter);
 
         findViewById(R.id.btn_exit_sim).setOnClickListener(v -> finish());

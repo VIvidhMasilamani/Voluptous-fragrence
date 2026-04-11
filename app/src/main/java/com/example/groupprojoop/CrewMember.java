@@ -6,6 +6,7 @@ public class CrewMember {
     protected int skill;
     protected int resillience;
     protected int exp;
+    protected int level;
     protected int energy;
     protected int maxEnergy;
     protected String color;
@@ -23,6 +24,7 @@ public class CrewMember {
         this.energy = energy;
         this.maxEnergy = energy;
         this.exp = 0;
+        this.level = 1;
         this.isDefeated = false;
         this.type = this.getClass().getSimpleName();
     }
@@ -48,11 +50,36 @@ public class CrewMember {
         }
     }
 
-    public void gainExperience(int amount){
+    public boolean gainExperience(int amount){
         this.exp += amount;
+        int nextLevelExp = level * 100;
+        if (this.exp >= nextLevelExp) {
+            levelUp();
+            return true;
+        }
+        return false;
+    }
+
+    protected void levelUp() {
+        level++;
+        exp = 0;
+        skill += 2;
+        resillience += 1;
+        maxEnergy += 10;
+        energy = maxEnergy;
     }
 
     public void restoreEnergy(){
         this.energy = this.maxEnergy;
+        this.isDefeated = false;
+    }
+
+    public String getStatsString() {
+        return "Level: " + level + "\n" +
+               "Experience: " + exp + "/" + (level * 100) + "\n" +
+               "Skill: " + skill + "\n" +
+               "Resilience: " + resillience + "\n" +
+               "Energy: " + energy + "/" + maxEnergy + "\n\n" +
+               "Ability: " + getPassiveDescription();
     }
 }

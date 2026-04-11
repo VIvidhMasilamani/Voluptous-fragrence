@@ -1,7 +1,6 @@
 package com.example.groupprojoop;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,29 +27,26 @@ public class MissionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mission);
 
-        // In a real app, we'd pass these via Intent or a Game Manager
-        // For this prototype, we'll use the static/singleton references if available
-        // or re-initialize for the demo purpose.
-        
         setupMission();
         initUI();
     }
 
     private void setupMission() {
-        // Initialize mission components
         missionControl = new Missioncontrol(new Storage());
         missionControl.generateThreat();
         
-        // Get crew from Intent or static storage
-        // For now, let's assume we're taking them from the main storage for the demo
-        missionCrew = new ArrayList<>(Quarters.storage.listCrewMembers());
-        if (missionCrew.size() > 2) {
-            missionCrew = missionCrew.subList(0, 2);
-        }
+        List<Integer> selectedIds = getIntent().getIntegerArrayListExtra("selected_ids");
+        missionCrew = new ArrayList<>();
         
-        for (CrewMember c : missionCrew) {
-            missionControl.missioncontrolStorage.addCrewMember(c);
-            Quarters.storage.removeCrewMember(c.id);
+        if (selectedIds != null) {
+            for (Integer id : selectedIds) {
+                CrewMember c = Quarters.storage.getCrewMember(id);
+                if (c != null) {
+                    missionCrew.add(c);
+                    missionControl.missioncontrolStorage.addCrewMember(c);
+                    Quarters.storage.removeCrewMember(id);
+                }
+            }
         }
     }
 
@@ -64,10 +60,13 @@ public class MissionActivity extends AppCompatActivity {
         updateThreatUI();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CrewAdapter(missionCrew, null, null, missionControl, CrewAdapter.Context.MISSION, this::updateMissionState);
+        adapter = new CrewAdapter(missionCrew, null, missionControl, CrewAdapter.Context.MISSION, this::updateMissionState);
         recyclerView.setAdapter(adapter);
 
-        findViewById(R.id.btn_retreat).setOnClickListener(v -> finish());
+        findViewById(R.id.btn_retreat).setOnClickListener(v -> {
+            returnToQuarters();
+            finish();
+        });
     }
 
     private void updateMissionState() {
@@ -75,12 +74,14 @@ public class MissionActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         if (missionControl.threat.isDefeated()) {
-            Toast.makeText(this, "Victory!", Toast.LENGTH_LONG).show();
-            missionControl.endMission();
+            List<String> notifications = missionControl.endMission();
+            Toast.makeText(this, "Mission Successful!", Toast.LENGTH_SHORT).show();
+            for (String note : notifications) {
+                Toast.makeText(this, note, Toast.LENGTH_LONG).show();
+            }
             returnToQuarters();
             finish();
         } else {
-            // Check if all crew defeated
             boolean allDefeated = true;
             for (CrewMember c : missionCrew) {
                 if (c.energy > 0) {

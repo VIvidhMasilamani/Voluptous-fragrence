@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Medbay {
-    protected Storage medbaystorage;
-    protected static List<CrewMember> Defeatedunits = new ArrayList<>();
+    public static List<CrewMember> Defeatedunits = new ArrayList<>();
 
     public static void admit(CrewMember crewMember){
-        Defeatedunits.add(crewMember);
-
-        Quarters.storage.removeCrewMember(crewMember.id);
+        if (!Defeatedunits.contains(crewMember)) {
+            Defeatedunits.add(crewMember);
+            if (Quarters.storage != null) {
+                Quarters.storage.removeCrewMember(crewMember.id);
+            }
+        }
     }
 
-    public List<CrewMember> listDefeatedunits(){
-        return Defeatedunits;
-    }
-
-    public void restore(CrewMember crewMember){
+    public static void restore(CrewMember crewMember){
         crewMember.restoreEnergy();
         Defeatedunits.remove(crewMember);
-        Quarters.storage.addCrewMember(crewMember);
+        if (Quarters.storage != null) {
+            Quarters.storage.addCrewMember(crewMember);
+        }
     }
 }

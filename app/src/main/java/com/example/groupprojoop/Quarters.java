@@ -3,6 +3,8 @@ package com.example.groupprojoop;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.List;
+
 public class Quarters {
     protected static Storage storage;
 
@@ -11,6 +13,20 @@ public class Quarters {
     }
 
     public CrewMember createCrewMember(String name, String speciality) {
+        // Auto-naming logic
+        if (name == null || name.trim().isEmpty()) {
+            int count = 1;
+            if (storage != null) {
+                List<CrewMember> all = storage.listCrewMembers();
+                for (CrewMember cm : all) {
+                    if (cm.getClass().getSimpleName().equals(speciality)) {
+                        count++;
+                    }
+                }
+            }
+            name = speciality + " " + count;
+        }
+
         CrewMember crewMember;
         switch (speciality) {
             case "Soldier":
@@ -52,10 +68,7 @@ public class Quarters {
     }
 
     public void moveTosimulation(CrewMember crewMember, Simulator simulator, Context context) {
-        // Instead of deleting him, we open the Simulator Screen
-        Intent intent = new Intent(context, SimulatorActivity.class);
-        intent.putExtra("crew_id", crewMember.id);
-        context.startActivity(intent);
+        // Simulator removed as per user request, but keeping method signature for compatibility if needed elsewhere
     }
 
     public void returnToQuarters(CrewMember crewMember) {

@@ -12,19 +12,33 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GroupprojOOP">
         <activity
-            android:name=".MainActivity"
+            android:name=".StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
         <activity
             android:name=".MissionActivity"
             android:exported="false" />
         <activity
             android:name=".SimulatorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".QuartersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MedbayActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SelectCrewActivity"
             android:exported="false" />
     </application>
 
