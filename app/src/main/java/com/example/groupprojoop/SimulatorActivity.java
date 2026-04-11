@@ -1,10 +1,12 @@
 package com.example.groupprojoop;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -86,5 +88,47 @@ public class SimulatorActivity extends AppCompatActivity {
     private void updateHologramUI() {
         progressHologram.setMax(hologram.maxEnergy);
         progressHologram.setProgress(hologram.energy);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (trainingCrew == null || trainingCrew.isEmpty()) return super.onKeyDown(keyCode, event);
+        
+        CrewMember trainee = trainingCrew.get(0);
+        
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+            case KeyEvent.KEYCODE_BUTTON_A:
+                // Primary Action: Attack
+                String result = simControl.executeCombatTurn(trainee, false);
+                Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+                updateSimState();
+                return true;
+                
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_BUTTON_Y:
+                // Special Action: Special Attack
+                String specResult = simControl.executeCombatTurn(trainee, true);
+                Toast.makeText(this, specResult, Toast.LENGTH_SHORT).show();
+                updateSimState();
+                return true;
+                
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_BUTTON_X:
+                // View Stats
+                new AlertDialog.Builder(this)
+                        .setTitle(trainee.name + " Stats")
+                        .setMessage(trainee.getStatsString())
+                        .setPositiveButton("OK", null)
+                        .show();
+                return true;
+
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+            case KeyEvent.KEYCODE_BUTTON_B:
+                // Exit Simulator
+                finish();
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
